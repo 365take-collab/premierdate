@@ -4,8 +4,9 @@
 
 ### 公開可能キー（Publishable Key）
 ```
-pk_live_51SfDvu3F2rtCunnn73g16PUgn6alBGfiwH9WAGXDlsmkGMQ6Zb3i9NPg5T7isZl5nvgdKC9wB3cbeDwSQfADnosb00Xu2ndgsb
+pk_live_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 ```
+**⚠️ 注意**: 実際のキーは`.env`ファイルに設定してください。このファイルには含めません。
 
 ### シークレットキー（Secret Key）
 ```
