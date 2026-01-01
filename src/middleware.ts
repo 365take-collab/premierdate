@@ -212,7 +212,7 @@ export async function middleware(request: NextRequest) {
 
   // Utage側のURLが間違っている場合のリダイレクト
   // 例: /login-utage → /auth/login-utage
-  const { pathname, search } = request.nextUrl;
+  const search = request.nextUrl.search;
   if (pathname === '/login-utage') {
     return NextResponse.redirect(
       new URL(`/auth/login-utage${search}`, request.url)
