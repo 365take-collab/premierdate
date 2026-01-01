@@ -9,8 +9,9 @@ pk_live_REDACTED
 
 ### シークレットキー（Secret Key）
 ```
-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
+sk_live_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 ```
+**⚠️ 注意**: 実際のキーは`.env`ファイルに設定してください。このファイルには含めません。
 
 ---
 
@@ -34,8 +35,9 @@ sk_live_51SfDvu3F2rtCunnnT2vvSGhrUcF621BLvhwkirnIItazDDVtiALFMAEmP9tqKfk34RnDXwJ
 
 ```env
 # Stripe API Keys（本番モード）
-STRIPE_SECRET_KEY=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
-STRIPE_PUBLISHABLE_KEY=pk_live_REDACTED
+# ⚠️ 実際のキーはStripe Dashboardから取得して設定してください
+STRIPE_SECRET_KEY=sk_live_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+STRIPE_PUBLISHABLE_KEY=pk_live_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
 # Stripe Price IDs（価格IDを取得したら設定）
 STRIPE_PRICE_ID_MONTHLY=price_ここに月額プランの価格IDを貼り付け

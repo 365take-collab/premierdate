@@ -9,8 +9,9 @@ pk_live_REDACTED
 
 ### シークレットキー（Secret Key）
 ```
-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
+sk_live_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 ```
+**⚠️ 注意**: 実際のキーは`.env`ファイルに設定してください。このファイルには含めません。
 
 ### 価格ID（Price IDs）
 ```
@@ -26,8 +27,9 @@ price_1Siw0E3F2rtCunnn51NOynry
 
 ```env
 # Stripe API Keys（本番モード）
-STRIPE_SECRET_KEY=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
-STRIPE_PUBLISHABLE_KEY=pk_live_REDACTED
+# ⚠️ 実際のキーはStripe Dashboardから取得して設定してください
+STRIPE_SECRET_KEY=sk_live_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+STRIPE_PUBLISHABLE_KEY=pk_live_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
 # Stripe Price IDs
 # 注意: どちらが月額/年額かはStripe Dashboardで確認してください
