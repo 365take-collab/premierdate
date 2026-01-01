@@ -15,12 +15,12 @@ export async function GET(request: NextRequest) {
     }
 
     // ユーザーのプラン情報を取得
-    const user = await prisma.user.findUnique({
+    const user = await prisma.users.findUnique({
       where: { id: session.user.id },
       select: {
-        planType: true,
-        subscriptionStartDate: true,
-        subscriptionEndDate: true,
+        plan_type: true,
+        subscription_start_date: true,
+        subscription_end_date: true,
       },
     })
 
@@ -32,9 +32,9 @@ export async function GET(request: NextRequest) {
     }
 
     return NextResponse.json({
-      planType: user.planType,
-      subscriptionStartDate: user.subscriptionStartDate,
-      subscriptionEndDate: user.subscriptionEndDate,
+      planType: user.plan_type,
+      subscriptionStartDate: user.subscription_start_date,
+      subscriptionEndDate: user.subscription_end_date,
     }, { status: 200 })
   } catch (error) {
     console.error('Error fetching user plan:', error)

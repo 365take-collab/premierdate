@@ -41,7 +41,7 @@ export async function POST(request: NextRequest) {
     }
 
     // 既存ユーザーのチェック
-    const existingUser = await prisma.user.findUnique({
+    const existingUser = await prisma.users.findUnique({
       where: { email },
     })
 
