@@ -7,9 +7,12 @@ import { getUsageLimits, hasReachedLimit } from '@/lib/usage-limits'
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    // Next.js 16では params が Promise なので await する
+    const { id } = await params
+
     // 認証チェック
     const session = await getServerSession(authOptions)
     if (!session || !session.user?.id) {
@@ -45,7 +48,7 @@ export async function POST(
 
     // 店舗が存在するか確認
     const restaurant = await prisma.restaurants.findUnique({
-      where: { id: params.id },
+      where: { id },
     })
 
     if (!restaurant) {
@@ -91,7 +94,7 @@ export async function POST(
     const review = await prisma.reviews.create({
       data: {
         id: crypto.randomUUID(),
-        restaurant_id: params.id,
+        restaurant_id: id,
         user_id: session.user.id,
         rating: Number(rating),
         date_appropriateness: Number(dateAppropriateness),
