@@ -11,12 +11,12 @@ export async function getUserPlanType(): Promise<PlanType | null> {
     return null
   }
 
-  const user = await prisma.user.findUnique({
+  const user = await prisma.users.findUnique({
     where: { id: session.user.id },
-    select: { planType: true },
+    select: { plan_type: true },
   })
 
-  return user?.planType || PlanType.FREE
+  return user?.plan_type || PlanType.FREE
 }
 
 export async function isPremiumUser(): Promise<boolean> {

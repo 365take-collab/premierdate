@@ -61,21 +61,21 @@ export async function POST(request: NextRequest) {
       subscriptionEndDate.setFullYear(subscriptionEndDate.getFullYear() + 1)
     }
 
-    const user = await prisma.user.update({
+    const user = await prisma.users.update({
       where: { id: session.user.id },
       data: {
-        planType: planType as PlanType,
-        subscriptionStartDate: now,
-        subscriptionEndDate,
+        plan_type: planType as PlanType,
+        subscription_start_date: now,
+        subscription_end_date: subscriptionEndDate,
         // TODO: Utageから取得した顧客IDやサブスクリプションIDを保存
-        // stripeCustomerId: utageResponse.customerId,
-        // stripeSubscriptionId: utageResponse.subscriptionId,
+        // utage_customer_id: utageResponse.customerId,
+        // utage_subscription_id: utageResponse.subscriptionId,
       },
       select: {
         id: true,
-        planType: true,
-        subscriptionStartDate: true,
-        subscriptionEndDate: true,
+        plan_type: true,
+        subscription_start_date: true,
+        subscription_end_date: true,
       },
     })
 

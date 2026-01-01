@@ -2,40 +2,45 @@
 
 import Link from 'next/link'
 import { useSession, signOut } from 'next-auth/react'
+import { HelpCircle } from 'lucide-react'
 
 export default function Header() {
   const { data: session, status } = useSession()
 
   return (
-    <header className="bg-black/80 backdrop-blur-md border-b border-white/5 sticky top-0 z-50">
-      <div className="container mx-auto px-4 py-5">
-        <div className="flex items-center justify-between">
-          <Link href="/" className="text-xl font-semibold text-white tracking-tight hover:opacity-80 transition-opacity">
-            デートガイド
-          </Link>
-          <nav className="flex items-center gap-8">
+    <header className="bg-black border-b border-gray-800 sticky top-0 z-50 shadow-sm">
+      <div className="container mx-auto px-4">
+        <div className="flex items-center justify-between h-16">
+          <div className="flex items-center gap-4">
+            <Link href="/" className="text-2xl font-bold text-[#d70035] tracking-tight hover:opacity-80 transition-opacity">
+              プレミアデート
+            </Link>
+            <Link
+              href="/help"
+              className="text-gray-400 hover:text-white transition-colors"
+              title="使い方ガイド"
+            >
+              <HelpCircle className="w-5 h-5" />
+            </Link>
+          </div>
+          <nav className="flex items-center gap-6">
             <Link
               href="/search"
               className="text-gray-400 hover:text-white transition-colors text-sm font-medium"
             >
               店舗を探す
             </Link>
-            <Link
-              href="/ranking"
-              className="text-gray-400 hover:text-white transition-colors text-sm font-medium"
-            >
-              ランキング
-            </Link>
-            <Link
-              href="/date-courses"
-              className="text-gray-400 hover:text-white transition-colors text-sm font-medium"
-            >
-              デートコース
-            </Link>
             {status === 'loading' ? (
-              <div className="w-20 h-6 bg-white/5 rounded animate-pulse"></div>
+              <div className="w-20 h-6 bg-gray-800 rounded animate-pulse"></div>
             ) : session ? (
-              <div className="flex items-center gap-4">
+              <>
+                <Link
+                  href="/ranking"
+                  className="text-gray-400 hover:text-white transition-colors text-sm font-medium relative"
+                >
+                  ランキング
+                  <span className="ml-1 text-xs text-[#d70035] font-bold">有料</span>
+                </Link>
                 <Link
                   href="/favorites"
                   className="text-gray-400 hover:text-white transition-colors text-sm font-medium"
@@ -44,9 +49,9 @@ export default function Header() {
                 </Link>
                 <Link
                   href="/subscription"
-                  className="text-gray-400 hover:text-white transition-colors text-sm font-medium"
+                  className="bg-[#d70035] text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-[#b8002e] transition-colors"
                 >
-                  プラン
+                  プレミアム
                 </Link>
                 <span className="text-sm text-gray-400">
                   {session.user?.name || session.user?.email}
@@ -57,14 +62,29 @@ export default function Header() {
                 >
                   ログアウト
                 </button>
-              </div>
+              </>
             ) : (
-              <Link
-                href="/login"
-                className="text-gray-400 hover:text-white transition-colors text-sm font-medium"
-              >
-                ログイン
-              </Link>
+              <>
+                <Link
+                  href="/ranking"
+                  className="text-gray-400 hover:text-white transition-colors text-sm font-medium relative"
+                >
+                  ランキング
+                  <span className="ml-1 text-xs text-[#d70035] font-bold">有料</span>
+                </Link>
+                <Link
+                  href="/login"
+                  className="text-gray-400 hover:text-white transition-colors text-sm font-medium"
+                >
+                  ログイン
+                </Link>
+                <Link
+                  href="/subscription"
+                  className="bg-[#d70035] text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-[#b8002e] transition-colors"
+                >
+                  プレミアム登録
+                </Link>
+              </>
             )}
           </nav>
         </div>

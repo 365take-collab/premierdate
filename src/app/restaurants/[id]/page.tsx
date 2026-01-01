@@ -167,50 +167,70 @@ export default function RestaurantDetailPage() {
           </div>
           <div className="grid md:grid-cols-2 gap-6">
             <div>
+              {/* エリア・価格帯・住所・説明文（無料でも表示 - 食べログが無料で提供している情報） */}
               <div className="text-gray-400 mb-2">
                 <div>エリア: {restaurant.area}</div>
-                <div>住所: {restaurant.address}</div>
                 <div>価格帯: {getPriceRangeLabel(restaurant.price_range)}</div>
+                <div>住所: {restaurant.address}</div>
               </div>
               {restaurant.description && (
                 <p className="text-gray-300 mt-4">{restaurant.description}</p>
               )}
             </div>
             <div>
-              <div className="bg-gray-800 rounded p-4">
-                <h3 className="font-semibold mb-3">デート特化情報</h3>
-                <div className="space-y-2 text-sm">
-                  <div>
-                    <span className="text-gray-400">横並び席:</span>{' '}
-                    <span>{restaurant.side_by_side_seats ? 'あり' : 'なし'}</span>
+              {/* デート特化情報 */}
+              {(userPlan === 'PREMIUM_MONTHLY' || userPlan === 'PREMIUM_YEARLY' || restaurant.isPremiumUser) ? (
+                <div className="bg-gray-800 rounded p-4">
+                  <h3 className="font-semibold mb-3">デート特化情報</h3>
+                  <div className="space-y-2 text-sm">
+                    <div>
+                      <span className="text-gray-400">横並び席:</span>{' '}
+                      <span>{restaurant.side_by_side_seats ? 'あり' : 'なし'}</span>
+                    </div>
+                    {restaurant.customer_segment && (
+                      <div>
+                        <span className="text-gray-400">客層:</span>{' '}
+                        <span>{restaurant.customer_segment}</span>
+                      </div>
+                    )}
+                    {restaurant.atmosphere && (
+                      <div>
+                        <span className="text-gray-400">雰囲気:</span>{' '}
+                        <span>{restaurant.atmosphere}</span>
+                      </div>
+                    )}
+                    {restaurant.hotel_distance_walk && (
+                      <div>
+                        <span className="text-gray-400">ホテルまでの距離:</span>{' '}
+                        <span>徒歩{restaurant.hotel_distance_walk}分</span>
+                        {restaurant.hotel_distance_train && (
+                          <span> / 電車{restaurant.hotel_distance_train}分</span>
+                        )}
+                      </div>
+                    )}
                   </div>
-                  {restaurant.customer_segment && (
-                    <div>
-                      <span className="text-gray-400">客層:</span>{' '}
-                      <span>{restaurant.customer_segment}</span>
-                    </div>
-                  )}
-                  {restaurant.atmosphere && (
-                    <div>
-                      <span className="text-gray-400">雰囲気:</span>{' '}
-                      <span>{restaurant.atmosphere}</span>
-                    </div>
-                  )}
-                  {restaurant.hotel_distance_walk && (
-                    <div>
-                      <span className="text-gray-400">ホテルまでの距離:</span>{' '}
-                      <span>徒歩{restaurant.hotel_distance_walk}分</span>
-                      {restaurant.hotel_distance_train && (
-                        <span> / 電車{restaurant.hotel_distance_train}分</span>
-                      )}
-                    </div>
-                  )}
                 </div>
-              </div>
+              ) : (
+                <div className="bg-gray-800 rounded p-4 border-2 border-dashed border-gray-700">
+                  <div className="text-center py-8">
+                    <div className="text-4xl mb-3">🔒</div>
+                    <h3 className="font-semibold mb-2 text-white">デート特化情報</h3>
+                    <p className="text-gray-400 text-sm mb-4">
+                      横並び席・客層・雰囲気・ホテルまでの距離などの詳細情報を見るには
+                    </p>
+                    <Link
+                      href="/subscription"
+                      className="inline-block bg-[#d70035] text-white px-6 py-2 rounded-lg font-bold hover:bg-[#b8002e] transition"
+                    >
+                      プレミアムプランにアップグレード
+                    </Link>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
-          {/* 用途タグ */}
+          {/* 用途タグ（無料でも表示 - 食べログが無料で提供しているカテゴリ情報） */}
           {restaurant.restaurant_purposes && restaurant.restaurant_purposes.length > 0 && (
             <div className="mt-6">
               <h3 className="font-semibold mb-3">おすすめの用途</h3>
@@ -273,18 +293,26 @@ export default function RestaurantDetailPage() {
         </div>
 
         {/* レビューセクション */}
-        {(userPlan === 'PREMIUM_MONTHLY' || userPlan === 'PREMIUM_YEARLY' || restaurant.isPremiumUser) ? (
-          <div className="bg-gray-900 rounded-lg p-8">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold">レビュー</h2>
-              <div className="text-gray-400">
-                平均評価: {restaurant.avgRating.toFixed(1)} / 5.0
-                <br />
-                デート適性: {restaurant.avgDateAppropriateness.toFixed(1)} / 5.0
-              </div>
+        <div className="bg-gray-900 rounded-lg p-8">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-2xl font-bold">レビュー</h2>
+            {/* レビュー数は無料でも表示（食べログが無料で提供している情報） */}
+            <div className="text-gray-400">
+              レビュー数: {restaurant._count.reviews}件
+              {(userPlan === 'PREMIUM_MONTHLY' || userPlan === 'PREMIUM_YEARLY' || restaurant.isPremiumUser) && (
+                <>
+                  <br />
+                  平均評価: {restaurant.avgRating.toFixed(1)} / 5.0
+                  <br />
+                  デート適性: {restaurant.avgDateAppropriateness.toFixed(1)} / 5.0
+                </>
+              )}
             </div>
+          </div>
 
-            {restaurant.reviews.length === 0 ? (
+          {/* レビュー内容は有料ユーザーのみ */}
+          {(userPlan === 'PREMIUM_MONTHLY' || userPlan === 'PREMIUM_YEARLY' || restaurant.isPremiumUser) ? (
+            restaurant.reviews.length === 0 ? (
               <p className="text-gray-400">レビューがまだありません</p>
             ) : (
               <div className="space-y-6">
@@ -305,25 +333,29 @@ export default function RestaurantDetailPage() {
                   </div>
                 ))}
               </div>
-            )}
-          </div>
-        ) : (
-          <div className="bg-gray-900 rounded-lg p-8 text-center">
-            <h2 className="text-2xl font-bold mb-4">レビュー</h2>
-            <p className="text-gray-400 mb-6">
-              レビューを閲覧するにはプレミアムプランへのアップグレードが必要です
-            </p>
-            <div className="text-gray-500 mb-4">
-              レビュー数: {restaurant._count.reviews}件
+            )
+          ) : (
+            <div className="text-center py-8">
+              <div className="bg-gradient-to-r from-[#d70035]/20 to-[#d70035]/10 border border-[#d70035]/30 rounded-lg p-6">
+                <p className="text-gray-300 mb-4">
+                  <span className="text-[#d70035] font-bold text-xl">🔒</span>
+                </p>
+                <p className="text-gray-300 mb-2">
+                  レビュー内容を閲覧するにはプレミアムプランへのアップグレードが必要です
+                </p>
+                <p className="text-sm text-gray-400 mb-4">
+                  プレミアムプランでは、{restaurant._count.reviews}件のレビューとデート適性評価を確認できます
+                </p>
+                <Link
+                  href="/subscription"
+                  className="inline-block bg-[#d70035] text-white px-6 py-3 rounded-lg font-bold hover:bg-[#b8002e] transition"
+                >
+                  プレミアムプランにアップグレード
+                </Link>
+              </div>
             </div>
-            <Link
-              href="/subscription"
-              className="inline-block bg-white text-black px-6 py-3 rounded-lg font-semibold hover:bg-gray-200 transition"
-            >
-              プレミアムプランにアップグレード
-            </Link>
-          </div>
-        )}
+          )}
+        </div>
       </main>
     </div>
   )
