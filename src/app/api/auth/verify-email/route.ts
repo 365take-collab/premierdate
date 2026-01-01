@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import crypto from 'crypto'
 
 export async function POST(request: NextRequest) {
   try {
@@ -35,11 +36,14 @@ export async function POST(request: NextRequest) {
 
     if (!user) {
       // 新規ユーザーを作成（パスワードなし）
+      const now = new Date()
       user = await prisma.users.create({
         data: {
+          id: crypto.randomUUID(),
           email,
-          email_verified: new Date(),
+          email_verified: now,
           name: null,
+          updated_at: now,
         },
       })
     } else {
