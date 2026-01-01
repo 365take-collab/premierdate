@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "デートガイド - デートで失敗しない名店が見つかる",
+  title: "プレミアデート - デートで失敗しない名店が見つかる",
   description: "デートに特化した情報を提供する唯一のグルメ検索サービス",
 };
 

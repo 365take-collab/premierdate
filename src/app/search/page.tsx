@@ -11,6 +11,8 @@ import RestaurantCard from '@/components/RestaurantCard'
 import LoadingSpinner from '@/components/LoadingSpinner'
 import SkeletonCard from '@/components/SkeletonCard'
 import ErrorMessage from '@/components/ErrorMessage'
+import QuickRegisterForm from '@/components/QuickRegisterForm'
+import { useSession } from 'next-auth/react'
 
 interface Restaurant {
   id: string
@@ -46,6 +48,7 @@ const PRICE_RANGES = [
 
 export default function SearchPage() {
   const searchParams = useSearchParams()
+  const { data: session } = useSession()
   const [restaurants, setRestaurants] = useState<Restaurant[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -105,17 +108,28 @@ export default function SearchPage() {
   }
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-black text-white">
       <Header />
 
       {/* 検索バーセクション */}
-      <div className="border-b border-white/5 py-8">
+      <div className="border-b border-gray-800 bg-gray-900 py-6">
         <div className="container mx-auto px-4">
           <SearchBar />
+          {/* 未ログインユーザー向け：簡単登録フォーム */}
+          {!session && (
+            <div className="mt-4 max-w-2xl mx-auto">
+              <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg p-4 border border-gray-700">
+                <p className="text-sm text-gray-300 mb-3 text-center">
+                  <span className="text-[#d70035] font-bold">🔒</span> プレミアム機能を使うには登録が必要です
+                </p>
+                <QuickRegisterForm />
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
-      <main className="container mx-auto px-4 py-6">
+      <main className="container mx-auto px-4 py-6 bg-black">
         <div className="flex gap-6">
           {/* 左サイドバー: フィルター */}
           <aside className="hidden lg:block w-64 flex-shrink-0">
@@ -125,8 +139,8 @@ export default function SearchPage() {
           {/* メインコンテンツ */}
           <div className="flex-1">
             {/* ソート・件数表示 */}
-            <div className="flex justify-between items-center mb-6">
-              <div className="text-gray-500 text-xs">
+            <div className="flex justify-between items-center mb-6 pb-4 border-b border-gray-800">
+              <div className="text-gray-400 text-sm">
                 {loading ? (
                   '検索中...'
                 ) : (
@@ -144,23 +158,23 @@ export default function SearchPage() {
             ) : loading ? (
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {[...Array(6)].map((_, i) => (
-                  <div key={i} className="bg-white rounded-lg overflow-hidden">
+                  <div key={i} className="bg-gray-900 rounded-lg overflow-hidden">
                     <SkeletonCard />
                   </div>
                 ))}
               </div>
             ) : restaurants.length === 0 ? (
-              <div className="bg-white/5 backdrop-blur-sm rounded-lg p-12 text-center border border-white/10">
-                <p className="text-gray-400 text-base mb-2">
+              <div className="bg-gray-900 rounded-lg p-12 text-center border border-gray-800">
+                <p className="text-gray-300 text-base mb-2 font-medium">
                   条件に一致する店舗が見つかりませんでした
                 </p>
-                <p className="text-gray-600 text-sm">
+                <p className="text-gray-500 text-sm">
                   検索条件を変更してお試しください
                 </p>
               </div>
             ) : (
               <>
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="space-y-4">
                   {restaurants.map((restaurant) => (
                     <RestaurantCard
                       key={restaurant.id}
@@ -176,7 +190,7 @@ export default function SearchPage() {
                     <button
                       onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
                       disabled={currentPage === 1 || loading}
-                      className="px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                      className="px-4 py-2 bg-gray-900 border border-gray-700 rounded-md text-white hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition"
                     >
                       前へ
                     </button>
@@ -200,10 +214,10 @@ export default function SearchPage() {
                           key={pageNum}
                           onClick={() => setCurrentPage(pageNum)}
                           disabled={loading}
-                          className={`px-4 py-2 rounded-lg transition ${
+                          className={`px-4 py-2 rounded-md transition ${
                             currentPage === pageNum
-                              ? 'bg-white text-black font-semibold'
-                              : 'bg-white/5 border border-white/10 text-white hover:bg-white/10'
+                              ? 'bg-[#d70035] text-white font-bold'
+                              : 'bg-gray-900 border border-gray-700 text-white hover:bg-gray-800'
                           } disabled:opacity-50 disabled:cursor-not-allowed`}
                         >
                           {pageNum}
@@ -214,7 +228,7 @@ export default function SearchPage() {
                     <button
                       onClick={() => setCurrentPage(Math.min(Math.ceil(total / itemsPerPage), currentPage + 1))}
                       disabled={currentPage >= Math.ceil(total / itemsPerPage) || loading}
-                      className="px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                      className="px-4 py-2 bg-gray-900 border border-gray-700 rounded-md text-white hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition"
                     >
                       次へ
                     </button>

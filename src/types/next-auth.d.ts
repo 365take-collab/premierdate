@@ -1,5 +1,6 @@
 import 'next-auth'
 import 'next-auth/jwt'
+import { PlanType } from '@prisma/client'
 
 declare module 'next-auth' {
   interface Session {
@@ -7,6 +8,7 @@ declare module 'next-auth' {
       id: string
       email: string
       name?: string | null
+      planType?: PlanType
     }
   }
 
@@ -14,6 +16,7 @@ declare module 'next-auth' {
     id: string
     email: string
     name?: string | null
+    planType?: PlanType
   }
 }
 
@@ -22,6 +25,7 @@ declare module 'next-auth/jwt' {
     id: string
     email: string
     name?: string | null
+    planType?: PlanType
   }
 }
 

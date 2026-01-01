@@ -2,9 +2,15 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
-import { stripe, STRIPE_PRICE_IDS } from '@/lib/stripe'
 import { PlanType } from '@prisma/client'
 
+/**
+ * Utage決済ページへのリダイレクトURLを生成
+ * 
+ * Utageの決済ページURLは環境変数で設定します。
+ * 例: UTAGE_CHECKOUT_URL_MONTHLY=https://utage.jp/checkout/monthly
+ *     UTAGE_CHECKOUT_URL_YEARLY=https://utage.jp/checkout/yearly
+ */
 export async function POST(request: NextRequest) {
   try {
     // 認証チェック
@@ -32,7 +38,6 @@ export async function POST(request: NextRequest) {
       select: {
         id: true,
         email: true,
-        stripe_customer_id: true,
       },
     })
 
@@ -43,69 +48,44 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Stripe Customer IDが存在しない場合は作成
-    let customerId = user.stripe_customer_id
+    // Utageの決済ページURLを取得（環境変数から）
+    const utageCheckoutUrl = planType === PlanType.PREMIUM_MONTHLY
+      ? process.env.UTAGE_CHECKOUT_URL_MONTHLY
+      : process.env.UTAGE_CHECKOUT_URL_YEARLY
 
-    if (!customerId) {
-      const customer = await stripe.customers.create({
-        email: user.email || undefined,
-        metadata: {
-          userId: user.id,
+    if (!utageCheckoutUrl) {
+      console.error('Utage checkout URL not configured:', { planType })
+      return NextResponse.json(
+        { 
+          error: 'Utage決済ページのURLが設定されていません。管理者にお問い合わせください。',
+          details: 'UTAGE_CHECKOUT_URL_MONTHLY または UTAGE_CHECKOUT_URL_YEARLY を環境変数に設定してください'
         },
-      })
-      customerId = customer.id
-
-      // データベースに保存
-      await prisma.users.update({
-        where: { id: user.id },
-        data: { stripe_customer_id: customerId },
-      })
+        { status: 500 }
+      )
     }
 
-    // Price IDを取得
-    const priceId = planType === PlanType.PREMIUM_MONTHLY
-      ? STRIPE_PRICE_IDS.PREMIUM_MONTHLY
-      : STRIPE_PRICE_IDS.PREMIUM_YEARLY
-
-    // ベースURLを取得
-    const baseUrl = process.env.NEXTAUTH_URL || process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
-
-    // Stripe Checkout Sessionを作成
-    const checkoutSession = await stripe.checkout.sessions.create({
-      customer: customerId,
-      payment_method_types: ['card'],
-      line_items: [
-        {
-          price: priceId,
-          quantity: 1,
-        },
-      ],
-      mode: 'subscription',
-      success_url: `${baseUrl}/subscription/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${baseUrl}/subscription?canceled=true`,
-      metadata: {
-        userId: user.id,
-        planType: planType,
-      },
-      subscription_data: {
-        metadata: {
-          userId: user.id,
-          planType: planType,
-        },
-      },
-    })
+    // Utageの決済ページURLにメールアドレスをパラメータとして追加
+    // Utageの%mail%変数を使用する場合、URLパラメータで渡す
+    const checkoutUrl = new URL(utageCheckoutUrl)
+    checkoutUrl.searchParams.set('email', user.email || '')
+    checkoutUrl.searchParams.set('user_id', user.id)
+    
+    // 成功後のリダイレクト先（Utageのサンクスページから戻るURL）
+    const baseUrl = process.env.NEXTAUTH_URL || process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3003'
+    const successUrl = `${baseUrl}/subscription/success`
+    checkoutUrl.searchParams.set('success_url', successUrl)
 
     return NextResponse.json(
       {
-        sessionId: checkoutSession.id,
-        url: checkoutSession.url,
+        url: checkoutUrl.toString(),
+        planType,
       },
       { status: 200 }
     )
   } catch (error) {
-    console.error('Error creating checkout session:', error)
+    console.error('Error creating Utage checkout URL:', error)
     return NextResponse.json(
-      { error: 'Checkout Sessionの作成に失敗しました' },
+      { error: 'Utage決済ページのURL生成に失敗しました' },
       { status: 500 }
     )
   }

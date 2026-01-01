@@ -1,10 +1,10 @@
-# デートガイド (Date Guide)
+# プレミアデート (Premier Date)
 
 デートで失敗しない名店が見つかる、デート特化のグルメ検索サービス。
 
 ## 概要
 
-デートガイドは、デートに特化した情報を提供するグルメ検索サービスです。横並び席の有無、客層、ホテルまでの距離など、デートに必要な情報を1つの画面で確認できます。
+プレミアデートは、デートに特化した情報を提供するグルメ検索サービスです。横並び席の有無、客層、ホテルまでの距離など、デートに必要な情報を1つの画面で確認できます。
 
 ## 技術スタック
 
@@ -47,10 +47,22 @@ DATABASE_URL="postgresql://postgres:[YOUR-PASSWORD]@db.xxxxx.supabase.co:5432/po
 NEXTAUTH_SECRET="your-nextauth-secret-here"
 NEXTAUTH_URL="http://localhost:3000"
 
-# Stripe（後で設定）
+# Stripe（オプション - Utageを使用する場合は不要）
 STRIPE_SECRET_KEY="sk_test_..."
 STRIPE_PUBLISHABLE_KEY="pk_test_..."
 STRIPE_WEBHOOK_SECRET="whsec_..."
+
+# Utage決済連携（推奨）
+UTAGE_CHECKOUT_URL_MONTHLY="https://utage.jp/checkout/monthly"
+UTAGE_CHECKOUT_URL_YEARLY="https://utage.jp/checkout/yearly"
+UTAGE_MEMBER_URL="https://utage-system.com/member"
+UTAGE_WEBHOOK_SECRET="your-webhook-secret-key"
+UTAGE_TOKEN_SECRET="your-token-secret-key"
+
+# ⚠️ 開発環境用（本番環境では絶対に設定しないこと）
+# UTAGE_ALLOW_DEV_LOGIN="true"
+# UTAGE_ALLOW_SIMPLE_LOGIN="true"
+# UTAGE_AUTO_CREATE_USER="true"
 ```
 
 ### 3. データベースのセットアップ

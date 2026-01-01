@@ -9,21 +9,25 @@ import LoadingSpinner from '@/components/LoadingSpinner'
 export default function SubscriptionSuccessPage() {
   const searchParams = useSearchParams()
   const router = useRouter()
-  const sessionId = searchParams.get('session_id')
+  const sessionId = searchParams.get('session_id') // Stripe用
+  const email = searchParams.get('email') // Utage用
+  const orderId = searchParams.get('order_id') // Utage用
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    if (!sessionId) {
-      setError('セッションIDが見つかりません')
+    // Utage経由またはStripe経由のどちらかでアクセス
+    if (!sessionId && !email && !orderId) {
+      // セッションIDもメールアドレスもない場合は、Webhookで処理されるまで待つ
+      // または、単純に成功メッセージを表示
       setLoading(false)
       return
     }
 
-    // セッションIDから決済情報を確認（オプション）
+    // セッションIDまたはメールアドレスから決済情報を確認（オプション）
     // 実際にはWebhookで処理されるので、ここでは表示のみ
     setLoading(false)
-  }, [sessionId])
+  }, [sessionId, email, orderId])
 
   if (loading) {
     return (

@@ -334,6 +334,7 @@ export default function SubscriptionPage() {
           <div className="mt-8 text-center text-gray-400 text-sm">
             <p>※ 7日間無料トライアル後、自動的に課金が開始されます</p>
             <p className="mt-2">※ いつでもキャンセル可能です</p>
+            <p className="mt-2">※ 決済はUtage経由で安全に処理されます</p>
           </div>
         </div>
       </main>

@@ -7,8 +7,7 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    // TODO: テスト用に一時的にプレミアムユーザーとして扱う
-    const isPremium = true // await isPremiumUser()
+    const isPremium = await isPremiumUser()
     const { id } = await params
 
     const restaurant = await prisma.restaurants.findUnique({
