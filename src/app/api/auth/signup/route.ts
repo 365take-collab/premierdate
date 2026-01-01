@@ -21,7 +21,7 @@ export async function POST(request: Request) {
     }
 
     // 既存ユーザーのチェック
-    const existingUser = await prisma.user.findUnique({
+    const existingUser = await prisma.users.findUnique({
       where: { email },
     })
 
@@ -36,7 +36,7 @@ export async function POST(request: Request) {
     const hashedPassword = await bcrypt.hash(password, 10)
 
     // ユーザー作成
-    const user = await prisma.user.create({
+    const user = await prisma.users.create({
       data: {
         email,
         password: hashedPassword,

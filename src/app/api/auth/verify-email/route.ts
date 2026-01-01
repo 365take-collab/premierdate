@@ -29,13 +29,13 @@ export async function POST(request: NextRequest) {
     }
 
     // ユーザーが既に存在するか確認
-    let user = await prisma.user.findUnique({
+    let user = await prisma.users.findUnique({
       where: { email },
     })
 
     if (!user) {
       // 新規ユーザーを作成（パスワードなし）
-      user = await prisma.user.create({
+      user = await prisma.users.create({
         data: {
           email,
           email_verified: new Date(),
@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
       })
     } else {
       // 既存ユーザーの場合、メール認証を更新
-      await prisma.user.update({
+      await prisma.users.update({
         where: { email },
         data: {
           email_verified: new Date(),
