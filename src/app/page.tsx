@@ -13,12 +13,12 @@ export default function Home() {
 
       {/* メインコンテンツ */}
       <main>
-        {/* ヒーローセクション */}
-        <section className="border-b border-gray-800 py-16 bg-gradient-to-b from-gray-900 to-black">
+        {/* ヒーローセクション - 簡潔に */}
+        <section className="border-b border-gray-800 py-20 bg-gradient-to-b from-gray-900 to-black">
           <div className="container mx-auto px-4">
-            <div className="max-w-3xl mx-auto text-center mb-12">
+            <div className="max-w-3xl mx-auto text-center">
               <div className="flex items-center justify-center gap-4 mb-6">
-                <h1 className="text-4xl font-bold text-white tracking-tight">
+                <h1 className="text-4xl md:text-5xl font-bold text-white tracking-tight">
                   デートで失敗しない名店が見つかる
                 </h1>
                 <Link
@@ -32,12 +32,12 @@ export default function Home() {
                   </svg>
                 </Link>
               </div>
-              <p className="text-lg text-gray-400 leading-relaxed mb-8">
-                プレミアデートは、デートに特化した情報を提供するグルメ検索サービスです。
+              <p className="text-lg md:text-xl text-gray-400 mb-6 leading-relaxed">
+                デートに特化したグルメ検索サービス。用途別検索で5分で最適なお店が見つかります。
               </p>
               
               {/* 社会的証明 */}
-              <div className="flex items-center justify-center gap-8 mb-10 text-sm text-gray-400">
+              <div className="flex items-center justify-center gap-8 mb-8 text-sm text-gray-400">
                 <div className="text-center">
                   <div className="text-[#d70035] text-2xl font-bold mb-1">1,000+</div>
                   <div>対象店舗</div>
@@ -55,15 +55,15 @@ export default function Home() {
               </div>
 
               {/* CTA */}
-              <div className="flex flex-col items-center gap-5">
+              <div className="flex flex-col items-center gap-4">
                 <Link
                   href="/search"
                   className="bg-[#d70035] text-white px-10 py-4 rounded-md font-bold hover:bg-[#b8002e] transition inline-block shadow-md"
                 >
                   今すぐ無料で検索する
                 </Link>
-                <div className="text-center space-y-3">
-                  <div className="flex items-center justify-center gap-4 text-xs text-gray-400">
+                <div className="text-center">
+                  <div className="flex items-center justify-center gap-4 text-xs text-gray-400 mb-2">
                     <span className="font-medium">検索は無料</span>
                     <span className="text-gray-600">·</span>
                     <span className="font-medium">ランキング・レビューは有料</span>
@@ -74,9 +74,14 @@ export default function Home() {
                 </div>
               </div>
             </div>
-            
+          </div>
+        </section>
+
+        {/* 登録フォーム・検索バーセクション */}
+        <section className="border-b border-gray-800 py-12 bg-black">
+          <div className="container mx-auto px-4">
             {/* 簡単登録フォーム */}
-            <div className="max-w-2xl mx-auto mt-8">
+            <div className="max-w-2xl mx-auto mb-12">
               <div className="bg-gray-900/50 backdrop-blur-sm rounded-lg p-6 border border-gray-800">
                 <h3 className="text-lg font-bold mb-3 text-center text-white">
                   メールアドレスだけで無料登録
@@ -89,7 +94,7 @@ export default function Home() {
             </div>
             
             {/* 検索バー */}
-            <div className="max-w-2xl mx-auto mt-12">
+            <div className="max-w-2xl mx-auto">
               <SearchBar />
             </div>
           </div>
@@ -147,7 +152,7 @@ export default function Home() {
                 用途別検索で「誕生日用」「初デート用」を選ぶだけ。準備時間が1時間から5分に短縮されます。
               </p>
               <div className="text-xs text-gray-500 uppercase tracking-wider">
-                横並び席・客層・ホテルまでの距離が一目で分かる
+                横並び席・客層・帰宅時間が一目で分かる
               </div>
             </div>
             <div className="bg-gray-900 p-8 rounded-lg border border-gray-800 shadow-sm hover:shadow-md hover:border-gray-700 transition-all">
