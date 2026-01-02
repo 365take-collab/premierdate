@@ -26,28 +26,28 @@ export async function GET(request: NextRequest) {
     }
 
     // お気に入り数
-    const favoriteCount = await prisma.favorite.count({
+    const favoriteCount = await prisma.favorites.count({
       where: {
-        userId: session.user.id,
+        user_id: session.user.id,
       },
     })
 
     // 今月のレビュー投稿数
     const now = new Date()
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
-    const reviewCount = await prisma.review.count({
+    const reviewCount = await prisma.reviews.count({
       where: {
-        userId: session.user.id,
-        createdAt: {
+        user_id: session.user.id,
+        created_at: {
           gte: startOfMonth,
         },
       },
     })
 
     // デートコース提案数
-    const dateCourseCount = await prisma.dateCourse.count({
+    const dateCourseCount = await prisma.date_courses.count({
       where: {
-        userId: session.user.id,
+        user_id: session.user.id,
       },
     })
 

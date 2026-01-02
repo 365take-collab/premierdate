@@ -142,8 +142,9 @@ async function main() {
       if (purposeCategory) {
             await prisma.restaurant_purposes.create({
           data: {
-            restaurantId: restaurant.id,
-            purposeCategoryId: purposeCategory.id,
+            id: randomUUID(),
+            restaurant_id: restaurant.id,
+            purpose_category_id: purposeCategory.id,
             priority: 0,
           },
         }).catch(() => {

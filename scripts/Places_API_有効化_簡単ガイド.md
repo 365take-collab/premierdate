@@ -51,7 +51,7 @@
 ターミナルで以下を実行:
 
 ```bash
-cd date-guide
+cd premier-date
 npm run collect:shisha-bars
 ```
 

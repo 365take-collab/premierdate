@@ -4,6 +4,7 @@ import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { getUserPlanType, getUserId } from '@/lib/user-plan'
 import { getUsageLimits, hasReachedLimit } from '@/lib/usage-limits'
+import crypto from 'crypto'
 
 // お気に入り一覧取得
 export async function GET(request: NextRequest) {
@@ -18,16 +19,16 @@ export async function GET(request: NextRequest) {
     }
 
     // お気に入り一覧を取得
-    const favorites = await prisma.favorite.findMany({
+    const favorites = await prisma.favorites.findMany({
       where: {
-        userId: session.user.id,
+        user_id: session.user.id,
       },
       include: {
-        restaurant: {
+        restaurants: {
           include: {
-            restaurantPurposes: {
+            restaurant_purposes: {
               include: {
-                purposeCategory: true,
+                purpose_categories: true,
               },
             },
             _count: {
@@ -40,17 +41,17 @@ export async function GET(request: NextRequest) {
         },
       },
       orderBy: {
-        createdAt: 'desc',
+        created_at: 'desc',
       },
     })
 
     // 平均評価を計算して追加
     const favoritesWithRating = await Promise.all(
       favorites.map(async (favorite) => {
-        const avgRating = await prisma.review.aggregate({
+        const avgRating = await prisma.reviews.aggregate({
           where: {
-            restaurantId: favorite.restaurant.id,
-            isPremiumOnly: false,
+            restaurant_id: favorite.restaurants.id,
+            is_premium_only: false,
           },
           _avg: {
             rating: true,
@@ -58,8 +59,8 @@ export async function GET(request: NextRequest) {
         })
         return {
           ...favorite,
-          restaurant: {
-            ...favorite.restaurant,
+          restaurants: {
+            ...favorite.restaurants,
             avgRating: avgRating._avg.rating || 0,
           },
         }
@@ -110,10 +111,10 @@ export async function POST(request: NextRequest) {
     }
 
     // 既にお気に入りに追加されているか確認
-    const existingFavorite = await prisma.favorite.findFirst({
+    const existingFavorite = await prisma.favorites.findFirst({
       where: {
-        userId: session.user.id,
-        restaurantId: restaurantId,
+        user_id: session.user.id,
+        restaurant_id: restaurantId,
       },
     })
 
@@ -134,9 +135,9 @@ export async function POST(request: NextRequest) {
     }
 
     // お気に入り数の制限チェック
-    const currentFavoriteCount = await prisma.favorite.count({
+    const currentFavoriteCount = await prisma.favorites.count({
       where: {
-        userId: session.user.id,
+        user_id: session.user.id,
       },
     })
 
@@ -152,10 +153,11 @@ export async function POST(request: NextRequest) {
     }
 
     // お気に入りを追加
-    const favorite = await prisma.favorite.create({
+    const favorite = await prisma.favorites.create({
       data: {
-        userId: session.user.id,
-        restaurantId: restaurantId,
+        id: crypto.randomUUID(),
+        user_id: session.user.id,
+        restaurant_id: restaurantId,
       },
     })
 
@@ -195,10 +197,10 @@ export async function DELETE(request: NextRequest) {
     }
 
     // お気に入りを削除
-    const favorite = await prisma.favorite.findFirst({
+    const favorite = await prisma.favorites.findFirst({
       where: {
-        userId: session.user.id,
-        restaurantId: restaurantId,
+        user_id: session.user.id,
+        restaurant_id: restaurantId,
       },
     })
 
@@ -209,7 +211,7 @@ export async function DELETE(request: NextRequest) {
       )
     }
 
-    await prisma.favorite.delete({
+    await prisma.favorites.delete({
       where: {
         id: favorite.id,
       },

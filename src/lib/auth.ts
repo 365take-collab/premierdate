@@ -8,7 +8,8 @@ import bcrypt from 'bcryptjs'
 
 export const authOptions: NextAuthOptions = {
   // PrismaアダプターはOAuth/Email認証用（Credentials認証では使用しない）
-  adapter: PrismaAdapter(prisma) as any,
+  // EmailProviderを使用する場合のみadapterが必要
+  ...(process.env.SMTP_HOST ? { adapter: PrismaAdapter(prisma) as any } : {}),
   providers: [
     // メール/パスワード認証（開発用）
     CredentialsProvider({
@@ -122,7 +123,7 @@ export const authOptions: NextAuthOptions = {
       }
     }),
     // メール認証（本番用 - マジックリンク、オプション）
-    ...(process.env.SMTP_HOST ? [
+    ...(process.env.SMTP_HOST && process.env.SMTP_PORT && process.env.SMTP_USER && process.env.SMTP_PASSWORD ? [
       EmailProvider({
         server: {
           host: process.env.SMTP_HOST,
@@ -135,7 +136,7 @@ export const authOptions: NextAuthOptions = {
         from: process.env.SMTP_FROM || 'noreply@dateguide.jp',
       })
     ] : []),
-  ],
+  ].filter(Boolean),
   pages: {
     signIn: '/login',
     signOut: '/',

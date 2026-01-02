@@ -4,6 +4,7 @@ import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { getUserPlanType } from '@/lib/user-plan'
 import { getUsageLimits, hasReachedLimit } from '@/lib/usage-limits'
+import crypto from 'crypto'
 
 // デートコース一覧取得
 export async function GET(request: NextRequest) {
@@ -14,28 +15,28 @@ export async function GET(request: NextRequest) {
     // デートコース一覧を取得
     const where: any = {}
     if (isPublic) {
-      where.isPublic = true
+      where.is_public = true
     }
 
     // 認証されている場合は自分のコースも含める
     const session = await getServerSession(authOptions)
     if (session && session.user?.id) {
       where.OR = [
-        { isPublic: true },
-        { userId: session.user.id },
+        { is_public: true },
+        { user_id: session.user.id },
       ]
     } else {
-      where.isPublic = true
+      where.is_public = true
     }
 
-    const dateCourses = await prisma.dateCourse.findMany({
+    const dateCourses = await prisma.date_courses.findMany({
       where,
       include: {
-        restaurant: {
+        restaurants: {
           include: {
-            restaurantPurposes: {
+            restaurant_purposes: {
               include: {
-                purposeCategory: true,
+                purpose_categories: true,
               },
             },
             _count: {
@@ -46,7 +47,7 @@ export async function GET(request: NextRequest) {
             },
           },
         },
-        user: {
+        users: {
           select: {
             id: true,
             name: true,
@@ -55,7 +56,7 @@ export async function GET(request: NextRequest) {
         },
       },
       orderBy: {
-        createdAt: 'desc',
+        created_at: 'desc',
       },
       take: 50, // 最大50件
     })
@@ -121,9 +122,9 @@ export async function POST(request: NextRequest) {
     }
 
     // デートコース提案数の制限チェック
-    const currentDateCourseCount = await prisma.dateCourse.count({
+    const currentDateCourseCount = await prisma.date_courses.count({
       where: {
-        userId: session.user.id,
+        user_id: session.user.id,
       },
     })
 
@@ -139,25 +140,27 @@ export async function POST(request: NextRequest) {
     }
 
     // デートコースを作成
-    const dateCourse = await prisma.dateCourse.create({
+    const dateCourse = await prisma.date_courses.create({
       data: {
-        restaurantId,
-        userId: session.user.id,
-        courseName: courseName.trim(),
+        id: crypto.randomUUID(),
+        restaurant_id: restaurantId,
+        user_id: session.user.id,
+        course_name: courseName.trim(),
         description: description?.trim() || null,
-        isPublic: isPublic !== false, // デフォルトは公開
+        is_public: isPublic !== false, // デフォルトは公開
+        updated_at: new Date(),
       },
       include: {
-        restaurant: {
+        restaurants: {
           include: {
-            restaurantPurposes: {
+            restaurant_purposes: {
               include: {
-                purposeCategory: true,
+                purpose_categories: true,
               },
             },
           },
         },
-        user: {
+        users: {
           select: {
             id: true,
             name: true,

@@ -201,7 +201,7 @@ export default function RestaurantDetailPage() {
                     )}
                     {restaurant.hotel_distance_walk && (
                       <div>
-                        <span className="text-gray-400">ホテルまでの距離:</span>{' '}
+                        <span className="text-gray-400">デート後の帰宅時間:</span>{' '}
                         <span>徒歩{restaurant.hotel_distance_walk}分</span>
                         {restaurant.hotel_distance_train && (
                           <span> / 電車{restaurant.hotel_distance_train}分</span>
@@ -216,7 +216,7 @@ export default function RestaurantDetailPage() {
                     <div className="text-4xl mb-3">🔒</div>
                     <h3 className="font-semibold mb-2 text-white">デート特化情報</h3>
                     <p className="text-gray-400 text-sm mb-4">
-                      横並び席・客層・雰囲気・ホテルまでの距離などの詳細情報を見るには
+                      横並び席・客層・雰囲気・デート後の帰宅時間などの詳細情報を見るには
                     </p>
                     <Link
                       href="/subscription"
