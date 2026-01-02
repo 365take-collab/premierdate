@@ -23,10 +23,10 @@ export async function GET(request: NextRequest) {
     }
 
     // お気に入り状態を確認
-    const favorite = await prisma.favorite.findFirst({
+    const favorite = await prisma.favorites.findFirst({
       where: {
-        userId: session.user.id,
-        restaurantId: restaurantId,
+        user_id: session.user.id,
+        restaurant_id: restaurantId,
       },
     })
 

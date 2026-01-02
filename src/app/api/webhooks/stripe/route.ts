@@ -29,6 +29,13 @@ export async function POST(request: NextRequest) {
 
   let event: Stripe.Event
 
+  if (!stripe) {
+    return NextResponse.json(
+      { error: 'Stripe is not configured' },
+      { status: 500 }
+    )
+  }
+
   try {
     event = stripe.webhooks.constructEvent(body, signature, webhookSecret)
   } catch (err) {
@@ -76,7 +83,7 @@ export async function POST(request: NextRequest) {
 
         if (userId && planType) {
           const now = new Date()
-          const subscriptionEndDate = new Date(subscription.current_period_end * 1000)
+          const subscriptionEndDate = new Date((subscription as any).current_period_end * 1000)
 
           await prisma.users.update({
             where: {
@@ -113,7 +120,7 @@ export async function POST(request: NextRequest) {
 
       case 'invoice.payment_succeeded': {
         const invoice = event.data.object as Stripe.Invoice
-        const subscriptionId = invoice.subscription as string
+        const subscriptionId = (invoice as any).subscription as string as string
 
         if (subscriptionId) {
           const subscription = await stripe.subscriptions.retrieve(subscriptionId)
@@ -121,7 +128,7 @@ export async function POST(request: NextRequest) {
           const planType = subscription.metadata?.planType as PlanType
 
           if (userId && planType) {
-            const subscriptionEndDate = new Date(subscription.current_period_end * 1000)
+            const subscriptionEndDate = new Date((subscription as any).current_period_end * 1000)
 
             await prisma.users.update({
               where: { id: userId },
@@ -136,7 +143,7 @@ export async function POST(request: NextRequest) {
 
       case 'invoice.payment_failed': {
         const invoice = event.data.object as Stripe.Invoice
-        const subscriptionId = invoice.subscription as string
+        const subscriptionId = (invoice as any).subscription as string as string
 
         if (subscriptionId) {
           const subscription = await stripe.subscriptions.retrieve(subscriptionId)

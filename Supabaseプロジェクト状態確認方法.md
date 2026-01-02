@@ -55,7 +55,7 @@
 → データベースマイグレーションを実行できます：
 
 ```bash
-cd date-guide
+cd premier-date
 npm run db:migrate
 ```
 

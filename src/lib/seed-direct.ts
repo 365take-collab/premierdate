@@ -7,6 +7,7 @@ config({ path: resolve(process.cwd(), '.env') })
 
 import { PlanType, PriceRange } from '@prisma/client'
 import { PrismaClient } from '@prisma/client'
+import crypto from 'crypto'
 
 const prisma = new PrismaClient({
   log: ['query', 'error', 'warn'],
@@ -17,44 +18,54 @@ async function main() {
 
   // 用途カテゴリの作成
   const purposes = await Promise.all([
-    prisma.purposeCategory.upsert({
+    prisma.purpose_categories.upsert({
       where: { name: '初デート' },
       update: {},
       create: {
+        id: crypto.randomUUID(),
         name: '初デート',
         description: '初めてのデートにおすすめのお店',
+        updated_at: new Date(),
       },
     }),
-    prisma.purposeCategory.upsert({
+    prisma.purpose_categories.upsert({
       where: { name: '誕生日' },
       update: {},
       create: {
+        id: crypto.randomUUID(),
         name: '誕生日',
         description: '誕生日のデートにおすすめのお店',
+        updated_at: new Date(),
       },
     }),
-    prisma.purposeCategory.upsert({
+    prisma.purpose_categories.upsert({
       where: { name: '記念日' },
       update: {},
       create: {
+        id: crypto.randomUUID(),
         name: '記念日',
         description: '記念日のデートにおすすめのお店',
+        updated_at: new Date(),
       },
     }),
-    prisma.purposeCategory.upsert({
+    prisma.purpose_categories.upsert({
       where: { name: 'カジュアルデート' },
       update: {},
       create: {
+        id: crypto.randomUUID(),
         name: 'カジュアルデート',
         description: '気軽に楽しめるデートにおすすめのお店',
+        updated_at: new Date(),
       },
     }),
-    prisma.purposeCategory.upsert({
+    prisma.purpose_categories.upsert({
       where: { name: '夜のデート' },
       update: {},
       create: {
+        id: crypto.randomUUID(),
         name: '夜のデート',
         description: '夜のデートにおすすめのお店',
+        updated_at: new Date(),
       },
     }),
   ])
@@ -67,64 +78,86 @@ async function main() {
       name: 'レストラン サンプル1',
       area: '渋谷',
       address: '東京都渋谷区道玄坂1-2-3',
-      priceRange: PriceRange.BETWEEN_3000_5000,
+      price_range: PriceRange.BETWEEN_3000_5000,
       atmosphere: '落ち着いた雰囲気',
-      customerSegment: '20代-30代',
-      sideBySideSeats: true,
-      hotelDistanceWalk: 10,
-      hotelDistanceTrain: 5,
+      customer_segment: '20代-30代',
+      side_by_side_seats: true,
+      hotel_distance_walk: 10,
+      hotel_distance_train: 5,
       latitude: 35.658034,
       longitude: 139.701636,
       description: 'デートに最適な落ち着いたレストランです。',
-      purposeCategoryNames: ['初デート', 'カジュアルデート'],
+      purpose_categoriesNames: ['初デート', 'カジュアルデート'],
     },
     {
       name: 'レストラン サンプル2',
       area: '新宿',
       address: '東京都新宿区新宿3-1-1',
-      priceRange: PriceRange.BETWEEN_5000_10000,
+      price_range: PriceRange.BETWEEN_5000_10000,
       atmosphere: '高級感のある雰囲気',
-      customerSegment: '30代-40代',
-      sideBySideSeats: true,
-      hotelDistanceWalk: 15,
-      hotelDistanceTrain: 8,
+      customer_segment: '30代-40代',
+      side_by_side_seats: true,
+      hotel_distance_walk: 15,
+      hotel_distance_train: 8,
       latitude: 35.690921,
       longitude: 139.700258,
       description: '記念日に最適な高級レストランです。',
-      purposeCategoryNames: ['誕生日', '記念日'],
+      purpose_categoriesNames: ['誕生日', '記念日'],
     },
     {
       name: 'レストラン サンプル3',
       area: '表参道',
       address: '東京都渋谷区神宮前4-1-1',
-      priceRange: PriceRange.OVER_10000,
+      price_range: PriceRange.OVER_10000,
       atmosphere: '洗練された雰囲気',
-      customerSegment: '20代-30代',
-      sideBySideSeats: false,
-      hotelDistanceWalk: 20,
-      hotelDistanceTrain: 10,
+      customer_segment: '20代-30代',
+      side_by_side_seats: false,
+      hotel_distance_walk: 20,
+      hotel_distance_train: 10,
       latitude: 35.665412,
       longitude: 139.712677,
       description: 'おしゃれなデートに最適なレストランです。',
-      purposeCategoryNames: ['記念日', '夜のデート'],
+      purpose_categoriesNames: ['記念日', '夜のデート'],
     },
   ]
 
-  for (const restaurantData of sampleRestaurants) {
-    const { purposeCategoryNames, ...restaurantInfo } = restaurantData
+  for (const restaurantsData of sampleRestaurants) {
+    const { purpose_categoriesNames, ...restaurantsInfo } = restaurantsData
     
-    const restaurant = await prisma.restaurant.create({
-      data: restaurantInfo,
+    const restaurant = await prisma.restaurants.create({
+      data: {
+        id: crypto.randomUUID(),
+        name: restaurantsInfo.name,
+        area: restaurantsInfo.area,
+        address: restaurantsInfo.address,
+        price_range: restaurantsInfo.price_range,
+        atmosphere: restaurantsInfo.atmosphere || null,
+        customer_segment: restaurantsInfo.customer_segment || null,
+        side_by_side_seats: restaurantsInfo.side_by_side_seats || false,
+        hotel_distance_walk: restaurantsInfo.hotel_distance_walk || null,
+        hotel_distance_train: restaurantsInfo.hotel_distance_train || null,
+        latitude: restaurantsInfo.latitude,
+        longitude: restaurantsInfo.longitude,
+        description: restaurantsInfo.description || null,
+        name_kana: null,
+        address_detail: null,
+        phone_number: null,
+        image_url: null,
+        website_url: null,
+        reservation_url: null,
+        updated_at: new Date(),
+      },
     })
 
     // 用途カテゴリとの関連付け
-    for (const purposeName of purposeCategoryNames) {
-      const purposeCategory = purposes.find((p) => p.name === purposeName)
-      if (purposeCategory) {
-        await prisma.restaurantPurpose.create({
+    for (const purposeName of purpose_categoriesNames) {
+      const purpose_category = purposes.find((p) => p.name === purposeName)
+      if (purpose_category) {
+        await prisma.restaurant_purposes.create({
           data: {
-            restaurantId: restaurant.id,
-            purposeCategoryId: purposeCategory.id,
+            id: crypto.randomUUID(),
+            restaurant_id: restaurant.id,
+            purpose_category_id: purpose_category.id,
             priority: 0,
           },
         }).catch(() => {

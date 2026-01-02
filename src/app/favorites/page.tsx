@@ -8,14 +8,20 @@ import RestaurantCard from '@/components/RestaurantCard'
 import LoadingSpinner from '@/components/LoadingSpinner'
 import SkeletonCard from '@/components/SkeletonCard'
 import ErrorMessage from '@/components/ErrorMessage'
+import UsageStatus from '@/components/UsageStatus'
 
 interface Restaurant {
   id: string
   name: string
   area: string
-  priceRange: string
-  imageUrl: string | null
-  restaurantPurposes: Array<{
+  price_range: string
+  image_url: string | null
+  restaurant_purposes?: Array<{
+    purpose_categories: {
+      name: string
+    }
+  }>
+  restaurantPurposes?: Array<{
     purposeCategory: {
       name: string
     }
@@ -24,7 +30,8 @@ interface Restaurant {
     reviews: number
     favorites: number
   }
-  avgRating: number
+  avgRating?: number
+  isPremiumUser?: boolean
 }
 
 const PRICE_RANGES = [
@@ -64,7 +71,17 @@ export default function FavoritesPage() {
       }
 
       const data = await response.json()
-      const favoriteRestaurants = data.favorites.map((f: any) => f.restaurant)
+      const favoriteRestaurants = data.favorites.map((f: any) => {
+        const restaurant = f.restaurants || f.restaurant
+        return {
+          ...restaurant,
+          price_range: restaurant.price_range || restaurant.priceRange,
+          image_url: restaurant.image_url || restaurant.imageUrl,
+          restaurant_purposes: restaurant.restaurant_purposes || restaurant.restaurantPurposes?.map((rp: any) => ({
+            purpose_categories: rp.purposeCategory ? { name: rp.purposeCategory.name } : rp.purpose_categories
+          })),
+        }
+      })
       setRestaurants(favoriteRestaurants)
     } catch (error) {
       console.error('Error fetching favorites:', error)
@@ -77,6 +94,17 @@ export default function FavoritesPage() {
   const getPriceRangeLabel = (priceRange: string) => {
     const found = PRICE_RANGES.find((p) => p.value === priceRange)
     return found?.label || priceRange
+  }
+
+  const formatRestaurantForCard = (restaurant: any) => {
+    return {
+      ...restaurant,
+      price_range: restaurant.price_range || restaurant.priceRange,
+      image_url: restaurant.image_url || restaurant.imageUrl,
+      restaurant_purposes: restaurant.restaurant_purposes || restaurant.restaurantPurposes?.map((rp: any) => ({
+        purpose_categories: rp.purposeCategory ? { name: rp.purposeCategory.name } : rp.purpose_categories
+      })),
+    }
   }
 
   if (status === 'loading') {
@@ -156,7 +184,7 @@ export default function FavoritesPage() {
               {restaurants.map((restaurant) => (
                 <RestaurantCard
                   key={restaurant.id}
-                  restaurant={restaurant}
+                  restaurant={formatRestaurantForCard(restaurant)}
                   getPriceRangeLabel={getPriceRangeLabel}
                 />
               ))}

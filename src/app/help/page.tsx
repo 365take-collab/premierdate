@@ -122,7 +122,7 @@ export default function HelpPage() {
                       プレミアムプランで使える機能
                     </h3>
                     <ul className="text-gray-300 text-sm space-y-2 ml-6">
-                      <li>• デート特化情報（横並び席、客層、雰囲気、ホテルまでの距離）</li>
+                      <li>• デート特化情報（横並び席、客層、雰囲気、デート後の帰宅時間）</li>
                       <li>• レビュー内容の閲覧</li>
                       <li>• 平均評価・デート適性評価の確認</li>
                       <li>• 用途別・価格帯別ランキング</li>
@@ -268,7 +268,7 @@ export default function HelpPage() {
                 <div>
                   <h3 className="font-semibold text-white mb-2">Q: デート特化情報とは何ですか？</h3>
                   <p className="text-gray-300 text-sm">
-                    A: 横並び席の有無、客層、雰囲気、ホテルまでの距離など、デートに必要な情報です。プレミアムプランでご確認いただけます。
+                    A: 横並び席の有無、客層、雰囲気、デート後の帰宅時間など、デートに必要な情報です。プレミアムプランでご確認いただけます。
                   </p>
                 </div>
                 <div>

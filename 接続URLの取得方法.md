@@ -32,7 +32,7 @@ postgresql://postgres:dateguide202512@db.abcdefghijklmnop.supabase.co:5432/postg
 接続URL全体をコピーして、以下のコマンドを実行してください：
 
 ```bash
-cd date-guide
+cd premier-date
 # 接続URLを .env ファイルに設定（手動で編集するか、以下のコマンドで設定）
 ```
 

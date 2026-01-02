@@ -142,7 +142,7 @@ export default function RestaurantCard({ restaurant, rank, getPriceRangeLabel }:
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
                     <p className="text-xs text-gray-300 mb-1">
-                      <span className="text-[#d70035] font-bold">🔒</span> デート特化情報（横並び席・客層・ホテルまでの距離など）を見るには
+                      <span className="text-[#d70035] font-bold">🔒</span> デート特化情報（横並び席・客層・デート後の帰宅時間など）を見るには
                     </p>
                     <p className="text-xs text-[#d70035] font-bold">
                       プレミアムプランが必要です

@@ -39,6 +39,7 @@ npm install
 
 `.env`ファイルを作成し、以下の環境変数を設定してください：
 
+**開発環境用（.env.local）**:
 ```env
 # Database（Supabaseの場合の例）
 DATABASE_URL="postgresql://postgres:[YOUR-PASSWORD]@db.xxxxx.supabase.co:5432/postgres"
@@ -46,6 +47,24 @@ DATABASE_URL="postgresql://postgres:[YOUR-PASSWORD]@db.xxxxx.supabase.co:5432/po
 # NextAuth.js
 NEXTAUTH_SECRET="your-nextauth-secret-here"
 NEXTAUTH_URL="http://localhost:3000"
+NEXT_PUBLIC_BASE_URL="http://localhost:3000"
+
+# メール送信設定（SMTP）
+SMTP_HOST="smtp.gmail.com"
+SMTP_PORT="587"
+SMTP_USER="your-email@gmail.com"
+SMTP_PASSWORD="your-app-password"
+SMTP_FROM="noreply@premierdate.jp"
+```
+
+**本番環境用（Vercel環境変数）**:
+```env
+NEXTAUTH_URL="https://premierdate.jp"
+NEXT_PUBLIC_BASE_URL="https://premierdate.jp"
+SMTP_FROM="noreply@premierdate.jp"
+```
+
+詳細は `.env.example` を参照してください。
 
 # Stripe（オプション - Utageを使用する場合は不要）
 STRIPE_SECRET_KEY="sk_test_..."
@@ -100,7 +119,7 @@ npm run dev
 ## プロジェクト構造
 
 ```
-date-guide/
+premier-date/
 ├── prisma/
 │   └── schema.prisma          # Prismaスキーマ定義
 ├── src/
