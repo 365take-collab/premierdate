@@ -1,8 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { detectAnomalousPattern, getClientIP } from '@/lib/security';
 import { getToken } from 'next-auth/jwt';
-import { prisma } from '@/lib/prisma';
 import { PlanType } from '@prisma/client';
+
+// ミドルウェアでのPrisma使用を安全にするため、動的インポートを使用
+let prismaClient: any = null;
+async function getPrisma() {
+  if (!prismaClient) {
+    try {
+      const prismaModule = await import('@/lib/prisma');
+      prismaClient = prismaModule.prisma;
+    } catch (error) {
+      console.error('Prisma import error in middleware:', error);
+      return null;
+    }
+  }
+  return prismaClient;
+}
 
 /**
  * アクセス拒否時のHTMLページを生成
@@ -358,13 +372,26 @@ export async function middleware(request: NextRequest) {
   let subscriptionCheckError = false;
   if (isPremiumUser && token?.email) {
     try {
-      const user = await prisma.users.findUnique({
-        where: { email: token.email as string },
-        select: {
-          plan_type: true,
-          subscription_end_date: true,
-        },
-      });
+      // Prismaクライアントを取得（動的インポート）
+      const prismaClient = await getPrisma();
+      if (!prismaClient) {
+        subscriptionCheckError = true;
+        console.warn('Prisma client not available in middleware, skipping subscription check');
+      } else {
+        // データベース接続を試行（タイムアウト付き）
+        // ミドルウェアではデータベース接続が失敗する可能性があるため、エラーハンドリングを追加
+        const user = await Promise.race([
+          prismaClient.users.findUnique({
+          where: { email: token.email as string },
+          select: {
+            plan_type: true,
+            subscription_end_date: true,
+          },
+        }),
+        new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Database connection timeout')), 3000)
+        )
+      ]) as any;
       
       if (user && user.plan_type !== PlanType.FREE && user.subscription_end_date) {
         const now = new Date();
@@ -393,10 +420,13 @@ export async function middleware(request: NextRequest) {
           pathname: request.nextUrl.pathname,
         });
       }
-    } catch (error) {
+      }
+    } catch (error: any) {
       subscriptionCheckError = true;
-      console.error('課金期間確認エラー:', error);
+      // エラーログを出力するが、ミドルウェアの実行を継続
+      console.error('課金期間確認エラー（ミドルウェア）:', error?.message || error);
       // エラーが発生した場合は、Utage経由でのアクセスを促す
+      // ただし、ミドルウェアが完全に失敗しないように、エラーを無視して続行
     }
   }
   
